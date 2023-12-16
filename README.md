@@ -5,7 +5,8 @@
 - SQLite
 - SQLAlchemy
 - https://github.com/vinibiavatti1/TuiCss
-
+# Сайт
+http://ijimiji.pythonanywhere.com/
 # База
 ```
 CREATE TABLE Circuits (
@@ -17,7 +18,7 @@ CREATE TABLE Circuits (
     FOREIGN KEY (manufacturer_id) REFERENCES Manufacturers(id)
 );
 
-CREATE TABLE circuits (
+CREATE TABLE Manufacturers (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     created_at DATE,
