@@ -1,0 +1,33 @@
+<html class="tui-bg-blue-black" style="font-family: 'Public Pixel', sans-serif;">
+<head>
+    <title>Add</title>
+    <script src=" https://cdn.jsdelivr.net/npm/tuicss@2.1.2/dist/tuicss.min.js "></script>
+    <link href=" https://cdn.jsdelivr.net/npm/tuicss@2.1.2/dist/tuicss.min.css " rel="stylesheet"></link>
+    <link href="https://fonts.cdnfonts.com/css/public-pixel" rel="stylesheet"></link>
+</head>
+    <body class="center" style="padding: 50px;">
+        <div class="tui-window" style="margin: auto; width: fit-content; height: 300px;">
+    <h1>Edit circuit</h1>
+    <form method="post">
+        <label for="name">Circuit Name:</label><br>
+        <input class="tui-input" type="text" id="name" name="name" value="{{ circuit.name }}" required><br>
+
+        <label for="created_at">Created At:</label><br>
+        <input class="tui-input" type="date" id="created_at" name="created_at" value="{{ circuit.created_at.strftime('%Y-%m-%d') }}" required><br>
+
+        <label for="frequency">Frequency:</label><br>
+        <input class="tui-input" type="double" id="frequency" name="frequency" min="0" value="{{ circuit.frequency }}" required><br>
+
+        <label for="manufacturer">Manufacturer:</label><br>
+        <select id="manufacturer" name="manufacturer_id" value="{{ circuit.manufacturer_id }}" required>
+            <option value="">-- Select a manufacturer --</option>
+            {% for manufacturer in manufacturers %}
+            <option value="{{ manufacturer.id }}" {{ 'selected=selected' if manufacturer.id == circuit.manufacturer_id else '' }}>{{ manufacturer.name }}</option>
+            {% endfor %}
+        </select><br>
+
+        <input class="tui-button" type="submit" value="Save Changes">
+    </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,175 @@
+<html class="tui-bg-blue-black" style="font-family: 'Public Pixel', sans-serif;">
+
+<head>
+    <title>Add</title>
+    <script src=" https://cdn.jsdelivr.net/npm/tuicss@2.1.2/dist/tuicss.min.js "></script>
+    <link href=" https://cdn.jsdelivr.net/npm/tuicss@2.1.2/dist/tuicss.min.css " rel="stylesheet">
+    </link>
+    <link href="https://fonts.cdnfonts.com/css/public-pixel" rel="stylesheet">
+    </link>
+</head>
+
+<body class="center" style="padding: 50px;">
+    <div class="tui-window" style="margin: auto; width: fit-content; height: 300px;">
+        <div class="header">
+            <span><a class="tui-button" href="{{ url_for('manufacturers') }}">Manufacturers</a></span>
+            <span>Circuits</span>
+        </div>
+        <br>
+
+        <table id="circuits">
+            <thead>
+                <tr>
+                    <th onclick="sortTable(0)">Name</th>
+                    <th onclick="sortTable(1)">Created At</th>
+                    <th onclick="sortTable(2)">Frequency</th>
+                    <th onclick="sortTable(3)">Manufacturer</th>
+                    <th>Actions</th>
+                </tr>
+                <tr>
+                    <th><input class="tui-input" type="text" id="filter-name" onkeyup="filterTable()"
+                            placeholder="Search for names.." class="filter-input"></th>
+                    <th><input class="tui-input" type="text" id="filter-date" onkeyup="filterTable()"
+                            placeholder="Search for dates.." class="filter-input"></th>
+                    <th><input class="tui-input" type="double" id="filter-frequency" onkeyup="filterTable()"
+                            placeholder="Search for frequencies.." class="filter-input"></th>
+                    <th><input class="tui-input" type="text" id="filter-manufacturer" onkeyup="filterTable()"
+                            placeholder="Search for manufacturers.." class="filter-input"></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for circuit in circuits %}
+                <tr>
+                    <td>{{ circuit.name }}</td>
+                    <td>{{ circuit.created_at.strftime('%d.%m.%Y') }}</td>
+                    <td>{{ circuit.frequency }}</td>
+                    {% set manufacturer_id_int = circuit.manufacturer_id | int %}
+                    {% set selected_manufacturer = manufacturers | selectattr("id", "equalto", manufacturer_id_int) |
+                    first %}
+                    <td>
+                        <a href="{{ url_for('manufacturers', highlight=manufacturer_id_int) }}">
+                            {{ selected_manufacturer.name if selected_manufacturer else 'Manufacturer not found' }}
+                        </a>
+                    </td>
+                    <td>
+                        <button class="tui-button"
+                            onclick="window.location.href='/circuit_edit/{{ circuit.id }}';">Edit</button>
+                        <button class="tui-button"
+                            onclick="if(confirm('Are you sure?')) window.location.href='/circuit_delete/{{ circuit.id }}';">Delete</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <button class="tui-button" onclick="window.location.href='/circuit_add';">Add circuit</button>
+
+        <script>
+            var currentDir = Array(5).fill(0);
+            function sortTable(columnIndex) {
+                var table, rows, switching, i, x, y, shouldSwitch;
+                table = document.getElementById("circuits");
+                switching = true;
+
+                // Determine the direction (ascending or descending)
+                currentDir[columnIndex] = currentDir[columnIndex] != 1 ? 1 : -1;
+
+                while (switching) {
+                    switching = false;
+                    rows = table.rows;
+
+                    for (i = 2; i < rows.length - 1; i++) {
+                        shouldSwitch = false;
+                        x = rows[i].getElementsByTagName("TD")[columnIndex];
+                        y = rows[i + 1].getElementsByTagName("TD")[columnIndex];
+
+                        if (columnIndex == 2) {
+                            x = parseFloat(x.innerHTML);
+                            y = parseFloat(y.innerHTML);
+                        } else {
+                            x = x.innerHTML.toLowerCase();
+                            y = y.innerHTML.toLowerCase();
+                        }
+                        if (currentDir[columnIndex] == 1) {
+                            if (x > y) {
+                                shouldSwitch = true;
+                                break;
+                            }
+                        } else if (currentDir[columnIndex] == -1) {
+                            if (x < y) {
+                                shouldSwitch = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (shouldSwitch) {
+                        rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                        switching = true;
+                    }
+                }
+
+                // Remove existing arrows
+                var headers = table.getElementsByTagName("TH");
+                for (let header of headers) {
+                    header.innerHTML = header.innerHTML.replace(/ ▲| ▼/g, "");
+                }
+
+                // Add the right arrow
+                if (currentDir[columnIndex] == 1) {
+                    headers[columnIndex].innerHTML += " ▲";
+                } else {
+                    headers[columnIndex].innerHTML += " ▼";
+                }
+            }
+            function filterTable() {
+                var inputName = document.getElementById("filter-name");
+                var inputFrequency = document.getElementById("filter-frequency");
+                var inputDate = document.getElementById("filter-date");
+                var inputManufacturer = document.getElementById("filter-manufacturer");
+                var filterName = inputName.value.toUpperCase();
+                var filterFrequency = inputFrequency.value.toUpperCase();
+                var filterDate = inputDate.value.toUpperCase();
+                var filterManufacturer = inputManufacturer.value.toUpperCase();
+                var table = document.getElementById("circuits");
+                var tr = table.getElementsByTagName("tr");
+
+                for (var i = 2; i < tr.length; i++) {
+                    var tdName = tr[i].getElementsByTagName("td")[0];
+                    var tdDate = tr[i].getElementsByTagName("td")[1];
+                    var tdFrequency = tr[i].getElementsByTagName("td")[2];
+                    var tdManufacturer = tr[i].getElementsByTagName("td")[3];
+                    if (tdName && tdFrequency && tdDate && tdManufacturer) {
+                        var txtValueName = tdName.textContent || tdName.innerText;
+                        var txtValueFrequency = tdFrequency.textContent || tdFrequency.innerText;
+                        var txtValueDate = tdDate.textContent || tdDate.innerText;
+                        var txtValueManufacturer = tdManufacturer.textContent || tdManufacturer.innerText;
+                        if (txtValueName.toUpperCase().indexOf(filterName) > -1 &&
+                            txtValueFrequency.toUpperCase().indexOf(filterFrequency) > -1 &&
+                            txtValueDate.toUpperCase().indexOf(filterDate) > -1 &&
+                            txtValueManufacturer.toUpperCase().indexOf(filterManufacturer) > -1) {
+                            tr[i].style.display = "";
+                        } else {
+                            tr[i].style.display = "none";
+                        }
+                    }
+                }
+            }
+        </script>
+    </div>
+
+    <div class="footer" style="position: fixed; bottom: 0px; width: 100%; text-align: center;">
+        <div class="tui-panel">
+            <div class="tui-panel-content">
+                <p>Laryn Jahor, 4 group</p>
+                <a href="https://youtu.be/dQw4w9WgXcQ?si=YMNrAtzxIOikynru">
+                    <img src="https://media.tenor.com/plekWKGlR-YAAAAM/breakdance.gif" width="30px">
+                </a>
+                <img src="https://static.kotobank.ch/img/NOCOOKIS.GIF" alt="100% Cookies Free">
+                <img src="https://static.kotobank.ch/img/ANYBRSWR.GIF" alt="Best viewed with any browser">
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

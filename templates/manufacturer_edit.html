@@ -1,0 +1,26 @@
+<html class="tui-bg-blue-black" style="font-family: 'Public Pixel', sans-serif;">
+<head>
+    <title>Add</title>
+    <script src=" https://cdn.jsdelivr.net/npm/tuicss@2.1.2/dist/tuicss.min.js "></script>
+    <link href=" https://cdn.jsdelivr.net/npm/tuicss@2.1.2/dist/tuicss.min.css " rel="stylesheet"></link>
+    <link href="https://fonts.cdnfonts.com/css/public-pixel" rel="stylesheet"></link>
+</head>
+    <body class="center" style="padding: 50px;">
+        <div class="tui-window" style="margin: auto; width: fit-content; height: 300px;">
+    <h1>Edit manufacturer</h1>
+    <form method="post">
+        <label for="name">Name:</label><br>
+        <input class="tui-input" type="text" id="name" name="name" value="{{ manufacturer.name }}" required><br>
+
+        <label for="created_at">Created At:</label><br>
+        <input  class="tui-input"type="date" id="created_at" name="created_at" value="{{ manufacturer.created_at.strftime('%Y-%m-%d') }}" required><br>
+
+        <label for="revenue">Revenue:</label><br>
+        <input class="tui-input" type="number" id="rank" name="revenue" value="{{ manufacturer.revenue }}" min="1" required><br>
+
+        <input class="tui-button" type="submit" value="Save Changes">
+    </form>
+    </div>
+</body>
+</html>
+
